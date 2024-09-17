@@ -68,7 +68,7 @@ def main():
     st.title("🍲 Recipe Search Dashboard")
     
     # Sidebar filters
-    st.sidebar.header("Filters")
+    st.sidebar.header("Find your Recipe Here")
     
     # Move search input to sidebar
     query = st.sidebar.text_input("Search here...", "", key="search", label_visibility="visible", placeholder="e.g., vegan casserole")
