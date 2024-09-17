@@ -69,14 +69,16 @@ def main():
     
     # Sidebar filters
     st.sidebar.header("Filters")
-    query = st.text_input("Search here...", "", key="search", label_visibility="visible", placeholder="e.g., vegan casserole")
+    
+    # Move search input to sidebar
+    query = st.sidebar.text_input("Search here...", "", key="search", label_visibility="visible", placeholder="e.g., vegan casserole")
     
     diet = st.sidebar.selectbox("Dietary Restrictions", [None, "vegetarian", "vegan", "gluten free", "paleo", "ketogenic"], key="diet")
     time = st.sidebar.number_input("Max Preparation Time (minutes)", min_value=30, max_value=120, step=10, key="time")
     calories = st.sidebar.number_input("Max Calories", min_value=300, max_value=1500, step=100, key="calories")
 
     # Fetch recipes and display results
-    if st.button("Search"):
+    if st.sidebar.button("Search"):
         recipes = search_recipes(query, diet=diet, time=time, calories=calories)
         
         if recipes:
@@ -160,3 +162,4 @@ st.markdown(f"""
 
 if __name__ == "__main__":
     main()
+
