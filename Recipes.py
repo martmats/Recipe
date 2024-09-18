@@ -11,7 +11,7 @@ st.markdown("""
             background-color: white;
         }}
         /* Blue background for the sidebar */
-        section[data-testid="stSidebar"] {{
+        section[data-testid="stSidebar"] > div:first-child {{
             background-color: #007bff;
         }}
         /* Style the recipe display */
@@ -156,4 +156,5 @@ if st.sidebar.button("Generate Shopping List"):
     st.write("## Shopping List")
     for food, quantity in shopping_list.items():
         st.write(f"{food}: {quantity}")
+
 
