@@ -78,13 +78,13 @@ def fetch_recipes(query, diet_type, calorie_limit):
         st.write(response.text)
         return []
 
-# Sidebar options for search filters
+# Sidebar options for search filters and search query
 st.sidebar.title("Meal Plan Options")
 diet_type = st.sidebar.selectbox("Select Diet", ["Balanced", "Low-Carb", "High-Protein", "None"], index=0)
 calorie_limit = st.sidebar.number_input("Max Calories (Optional)", min_value=0, step=50)
-
-# Input field for the search query
-query = st.text_input("Search for recipes (e.g., chicken, vegan pasta)", "dinner")
+query = st.sidebar.text_input("Search for recipes (e.g., chicken, vegan pasta)", "dinner")
+if st.sidebar.button("Search Recipes"):
+    st.session_state.recipes = fetch_recipes(query, diet_type, calorie_limit)
 
 # Track selected day for each recipe in session state
 if "selected_days" not in st.session_state:
@@ -94,22 +94,17 @@ if "selected_days" not in st.session_state:
 def add_recipe_to_day(day, recipe):
     st.session_state.meal_plan[day].append(recipe)
 
-# Search button
-if st.button("Search Recipes"):
-    recipes = fetch_recipes(query, diet_type, calorie_limit)
-    
+# Show recipes if search has been performed
+if "recipes" in st.session_state:
+    recipes = st.session_state.recipes
     if recipes:
         st.write(f"## Showing {len(recipes)} recipes for **{query}**")
-
-        # Display recipes in card format with 3 columns
         cols = st.columns(3)
         for idx, recipe_data in enumerate(recipes):
             recipe = recipe_data["recipe"]
-
-            # Track selection in session_state
             recipe_key = f"recipe_{idx}"
             if recipe_key not in st.session_state.selected_days:
-                st.session_state.selected_days[recipe_key] = "Day 1"  # Default to Day 1
+                st.session_state.selected_days[recipe_key] = "Day 1"
 
             with cols[idx % 3]:
                 st.markdown(f"""
@@ -121,19 +116,17 @@ if st.button("Search Recipes"):
                 </div>
                 """, unsafe_allow_html=True)
 
-                # Select box for choosing the day (saved in session_state)
                 selected_day = st.selectbox(
-                    f"Choose day for {recipe['label']}", 
+                    f"Choose day for {recipe['label']}",
                     list(st.session_state.meal_plan.keys()), 
                     key=f"day_{recipe_key}"
                 )
                 if st.button(f"Add {recipe['label']} to {selected_day}", key=f"btn_{idx}"):
-                    st.session_state.meal_plan[selected_day].append(recipe)
+                    add_recipe_to_day(selected_day, recipe)
 
 # Display the meal plan in a calendar-like format
 st.write("## Your Meal Plan")
-
-cols = st.columns(7)  # Display days in a 7-column format (calendar style)
+cols = st.columns(7)
 for idx, (day, meals) in enumerate(st.session_state.meal_plan.items()):
     with cols[idx % 7]:
         st.write(f"### {day}")
@@ -143,18 +136,24 @@ for idx, (day, meals) in enumerate(st.session_state.meal_plan.items()):
         else:
             st.write("No meals added yet.")
 
+# Input for number of people before generating the shopping list
+people = st.sidebar.number_input("How many people?", min_value=1, value=1)
+
 # Generate shopping list button
-if st.button("Generate Shopping List"):
+if st.sidebar.button("Generate Shopping List"):
     shopping_list = {}
     for meals in st.session_state.meal_plan.values():
         for recipe in meals:
             for ingredient in recipe["ingredients"]:
-                if ingredient["food"] in shopping_list:
-                    shopping_list[ingredient["food"]] += ingredient["quantity"]
+                food_item = ingredient["food"]
+                quantity = ingredient["quantity"] * people  # Adjusting for number of people
+                if food_item in shopping_list:
+                    shopping_list[food_item] += quantity
                 else:
-                    shopping_list[ingredient["food"]] = ingredient["quantity"]
+                    shopping_list[food_item] = quantity
 
     # Display the shopping list
     st.write("## Shopping List")
     for food, quantity in shopping_list.items():
         st.write(f"{food}: {quantity}")
+
