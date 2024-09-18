@@ -113,13 +113,13 @@ if st.button("Search Recipes"):
                     """, unsafe_allow_html=True)
 
                     # Select box for choosing the day (saved in session_state)
-                    st.session_state.selected_days[recipe_key] = st.selectbox(
+                    selected_day = st.selectbox(
                         f"Choose day for {recipe['label']}", 
                         list(st.session_state.meal_plan.keys()), 
-                        key=recipe_key
+                        key=f"day_{recipe_key}"
                     )
-                    if st.button(f"Add {recipe['label']} to {st.session_state.selected_days[recipe_key]}", key=f"btn_{idx}"):
-                        add_recipe_to_day(st.session_state.selected_days[recipe_key], recipe)
+                    if st.button(f"Add {recipe['label']} to {selected_day}", key=f"btn_{idx}"):
+                        st.session_state.meal_plan[selected_day].append(recipe)
 
         else:
             st.warning("No recipes found. Try adjusting your search.")
@@ -155,5 +155,4 @@ if st.button("Generate Shopping List"):
     st.write("## Shopping List")
     for food, quantity in shopping_list.items():
         st.write(f"{food}: {quantity}")
-
 
