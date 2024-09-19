@@ -2,7 +2,7 @@
 
 Welcome to the **Recipe Search Dashboard**! This Streamlit app allows you to search for delicious recipes from multiple sources like **Spoonacular**, **Edamam**, and **TheMealDB** APIs. You can apply filters for dietary preferences, preparation time, and calories, and explore a wide variety of meals tailored to your needs.
 
-Check out the live app here: [Recipe Search Dashboard](https://your-app-link.com](https://recipesfinder.streamlit.app/) 🚀
+Check out the live app here: [Recipe Search Dashboard]([https://your-app-link.com](https://recipesfinder.streamlit.app/]) 🚀
 
 ## ✨ Features
 
